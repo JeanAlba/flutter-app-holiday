@@ -10,11 +10,16 @@ class FeriadosScreen extends StatefulWidget {
 
 class _FeriadosScreenState extends State<FeriadosScreen> {
   late Future<List<HolidaysModel>> feriados;
+  int _selectedYear = 2023;
 
   @override
   void initState() {
     super.initState();
-    feriados = FeriadoService().getFeriados();
+    _loadHolidays();
+  }
+
+  void _loadHolidays() {
+    feriados = FeriadoService().getFeriados(year: _selectedYear);
   }
 
   String _formatDate(String? dateString) {
@@ -29,14 +34,79 @@ class _FeriadosScreenState extends State<FeriadosScreen> {
     }
   }
 
+  Future<void> _showYearPicker() async {
+    final int currentYear = DateTime.now().year;
+    List<int> years = List<int>.generate(10, (index) => currentYear - index);
+
+    int? selected = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text(
+            'Selecionar Ano',
+            style: TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: ListView.builder(
+              itemCount: years.length,
+              itemBuilder: (context, index) {
+                final year = years[index];
+                return ListTile(
+                  title: Text(
+                    year.toString(),
+                    style: TextStyle(
+                      color:
+                          year == _selectedYear
+                              ? Colors.grey[900]
+                              : Colors.black54,
+                      fontWeight:
+                          year == _selectedYear
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context, year);
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.black54),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selected != null && selected != _selectedYear) {
+      setState(() {
+        _selectedYear = selected;
+      });
+      _loadHolidays();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text(
-          "Feriados Nacionais 2023",
-          style: TextStyle(
+        title: Text(
+          "Feriados Nacionais $_selectedYear",
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w300,
             fontSize: 20,
@@ -66,20 +136,20 @@ class _FeriadosScreenState extends State<FeriadosScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Text(
-                  "Erro ao carregar os feriados. Verifique sua conexão ou tente novamente.",
+                  "Erro ao carregar os feriados. Verifique sua conexão ou tente novamente. Erro: ${snapshot.error}",
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 18, color: Colors.black54),
                 ),
               ),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24.0),
                 child: Text(
-                  "Nenhum feriado encontrado para este ano.",
+                  "Nenhum feriado encontrado para o ano de $_selectedYear.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black54,
                     fontStyle: FontStyle.italic,
@@ -155,6 +225,13 @@ class _FeriadosScreenState extends State<FeriadosScreen> {
             );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showYearPicker,
+        backgroundColor: Colors.grey[900],
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.calendar_today_outlined),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
     );
   }
