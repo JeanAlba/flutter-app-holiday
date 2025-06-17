@@ -17,15 +17,14 @@ class _FormCourseState extends State<FormCourse> {
   TextEditingController textNameController = TextEditingController();
   TextEditingController textDescController = TextEditingController();
   TextEditingController textStartAtController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
 
+  final formKey = GlobalKey<FormState>();
   final repository = CourseRepository();
 
   @override
   void initState() {
     super.initState();
     if (widget.courseEdit != null) {
-      //this.
       textNameController.text = widget.courseEdit?.name ?? '';
       textDescController.text = widget.courseEdit?.description ?? '';
       textStartAtController.text = widget.courseEdit!.startAt ?? '';
@@ -101,7 +100,7 @@ class _FormCourseState extends State<FormCourse> {
                   if (value == null || value.isEmpty) {
                     return "Campo obrigatório";
                   }
-                  return null; //válido!
+                  return null;
                 },
               ),
               SizedBox(height: 15),
@@ -114,7 +113,7 @@ class _FormCourseState extends State<FormCourse> {
                   if (value == null || value.isEmpty) {
                     return "Campo obrigatório";
                   }
-                  return null; //válido!
+                  return null;
                 },
               ),
               SizedBox(height: 15),
@@ -125,7 +124,7 @@ class _FormCourseState extends State<FormCourse> {
                   if (value == null || value.isEmpty) {
                     return "Campo obrigatório";
                   }
-                  return null; //válido!
+                  return null;
                 },
                 onTap: () {
                   showDatePicker(

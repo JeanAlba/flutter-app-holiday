@@ -31,11 +31,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: Drawer(
         child: ListView(
-          // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.purple),
+              decoration: BoxDecoration(color: Colors.black),
               child: Text('Menu'),
             ),
             ListTile(
@@ -114,8 +113,8 @@ class _HomePageState extends State<HomePage> {
                   },
 
                   icon: Icons.edit,
-                  backgroundColor: Colors.grey,
-                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   label: "Editar",
                 ),
                 SlidableAction(
@@ -152,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                   icon: Icons.delete,
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   label: "Excluir",
                 ),
