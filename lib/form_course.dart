@@ -6,8 +6,7 @@ import 'package:intl/intl.dart';
 class FormCourse extends StatefulWidget {
   FormCourse({super.key, this.courseEdit});
 
-  final CourseModel?
-  courseEdit; // Alterado para 'final' pois não será reatribuído
+  final CourseModel? courseEdit;
 
   @override
   State<FormCourse> createState() => _FormCourseState();
@@ -28,8 +27,6 @@ class _FormCourseState extends State<FormCourse> {
     if (widget.courseEdit != null) {
       textNameController.text = widget.courseEdit?.name ?? '';
       textDescController.text = widget.courseEdit?.description ?? '';
-      // A data precisa ser formatada de volta para dd/MM/yyyy ao carregar para edição
-      // Assumindo que widget.courseEdit.startAt vem em formato ISO 8601 (yyyy-MM-ddTHH:mm:ss.SSSZ)
       if (widget.courseEdit?.startAt != null &&
           widget.courseEdit!.startAt!.isNotEmpty) {
         try {
@@ -38,8 +35,7 @@ class _FormCourseState extends State<FormCourse> {
             'dd/MM/yyyy',
           ).format(dateTime);
         } catch (e) {
-          textStartAtController.text =
-              'Data inválida'; // Tratar erro de parse, se houver
+          textStartAtController.text = 'Data inválida';
         }
       }
       id = widget.courseEdit?.id ?? '';
@@ -48,14 +44,12 @@ class _FormCourseState extends State<FormCourse> {
 
   @override
   void dispose() {
-    // Descartar os controladores quando o widget for removido da árvore
     textNameController.dispose();
     textDescController.dispose();
     textStartAtController.dispose();
     super.dispose();
   }
 
-  // Função para converter data de dd/MM/yyyy para yyyy-MM-ddTHH:mm:ss.SSSZ
   String _formatDatePtBrToApi(String dateString) {
     try {
       final parts = dateString.split('/');
@@ -63,24 +57,22 @@ class _FormCourseState extends State<FormCourse> {
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
-        // Usar DateTime.utc para garantir que a data seja tratada como UTC ao ser formatada para ISO 8601
         final dateTime = DateTime.utc(year, month, day);
-        return dateTime.toIso8601String(); // Formato esperado pela API
+        return dateTime.toIso8601String();
       }
     } catch (e) {
-      // Em caso de erro na conversão, você pode querer retornar algo ou lançar um erro
       print('Erro ao formatar data para API: $e');
     }
-    return ''; // Retorna vazio em caso de falha
+    return '';
   }
 
   Future<void> _saveCourse() async {
     if (!formKey.currentState!.validate()) {
-      return; // Se a validação falhar, não faz nada
+      return;
     }
 
     final course = CourseModel(
-      id: widget.courseEdit != null ? id : null, // ID apenas para atualização
+      id: widget.courseEdit != null ? id : null,
       name: textNameController.text,
       description: textDescController.text,
       startAt: _formatDatePtBrToApi(textStartAtController.text),
@@ -99,12 +91,12 @@ class _FormCourseState extends State<FormCourse> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      Navigator.pop(context); // Volta para a tela anterior
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao salvar os dados: $e'),
-          backgroundColor: Colors.red[700], // Fundo vermelho para erros
+          backgroundColor: Colors.red[700],
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -117,49 +109,39 @@ class _FormCourseState extends State<FormCourse> {
         widget.courseEdit != null ? "Editar Curso" : "Novo Curso";
 
     return Scaffold(
-      backgroundColor: Colors.grey[100], // Fundo cinza claro
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          appBarTitle, // Título dinâmico (Editar ou Novo)
+          appBarTitle,
           style: const TextStyle(
-            color: Colors.white, // Texto do título branco
-            fontWeight: FontWeight.w300, // Fonte light
+            color: Colors.white,
+            fontWeight: FontWeight.w300,
             fontSize: 20,
           ),
         ),
-        backgroundColor: Colors.grey[900]?.withOpacity(
-          0.8,
-        ), // AppBar cinza escuro transparente
-        elevation: 0, // Sem sombra
+        backgroundColor: Colors.grey[900]?.withOpacity(0.8),
+        elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ), // Seta de voltar branca
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Volta para a tela anterior
+            Navigator.pop(context);
           },
         ),
       ),
       body: SingleChildScrollView(
-        // Permite rolar o formulário
-        padding: const EdgeInsets.all(24.0), // Padding geral para o formulário
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: formKey,
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.stretch, // Estica os campos horizontalmente
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Campo Nome do Curso
               TextFormField(
                 controller: textNameController,
                 style: const TextStyle(color: Colors.black87, fontSize: 16),
                 decoration: InputDecoration(
-                  labelText: "Nome do Curso", // Label flutuante
-                  labelStyle: const TextStyle(
-                    color: Colors.black54,
-                  ), // Estilo do label
+                  labelText: "Nome do Curso",
+                  labelStyle: const TextStyle(color: Colors.black54),
                   hintText: "Ex: Desenvolvimento Web",
                   hintStyle: const TextStyle(color: Colors.black45),
                   filled: true,
@@ -181,12 +163,10 @@ class _FormCourseState extends State<FormCourse> {
                     borderSide: BorderSide(color: Colors.black87, width: 1.5),
                   ),
                   errorBorder: const OutlineInputBorder(
-                    // Borda para erro
                     borderRadius: BorderRadius.zero,
                     borderSide: BorderSide(color: Colors.red, width: 1),
                   ),
                   focusedErrorBorder: const OutlineInputBorder(
-                    // Borda para erro focado
                     borderRadius: BorderRadius.zero,
                     borderSide: BorderSide(color: Colors.red, width: 1.5),
                   ),
@@ -200,7 +180,6 @@ class _FormCourseState extends State<FormCourse> {
               ),
               const SizedBox(height: 16),
 
-              // Campo Descrição do Curso
               TextFormField(
                 controller: textDescController,
                 style: const TextStyle(color: Colors.black87, fontSize: 16),
@@ -236,7 +215,7 @@ class _FormCourseState extends State<FormCourse> {
                     borderSide: BorderSide(color: Colors.red, width: 1.5),
                   ),
                 ),
-                maxLines: 3, // Permite múltiplas linhas para a descrição
+                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "A descrição do curso é obrigatória";
@@ -246,10 +225,9 @@ class _FormCourseState extends State<FormCourse> {
               ),
               const SizedBox(height: 16),
 
-              // Campo Data de Início
               TextFormField(
                 controller: textStartAtController,
-                readOnly: true, // Impede a digitação direta no campo de data
+                readOnly: true,
                 style: const TextStyle(color: Colors.black87, fontSize: 16),
                 decoration: InputDecoration(
                   labelText: "Data de Início",
@@ -265,7 +243,7 @@ class _FormCourseState extends State<FormCourse> {
                   suffixIcon: const Icon(
                     Icons.calendar_today_outlined,
                     color: Colors.black54,
-                  ), // Ícone de calendário
+                  ),
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.zero,
                     borderSide: BorderSide(color: Colors.black12, width: 1),
@@ -294,32 +272,22 @@ class _FormCourseState extends State<FormCourse> {
                   return null;
                 },
                 onTap: () async {
-                  // O `async` é importante para usar await no showDatePicker
                   final pickedDate = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
-                    firstDate: DateTime(
-                      2000,
-                    ), // Permite datas passadas para edição
+                    firstDate: DateTime(2000),
                     lastDate: DateTime(2030),
                     builder: (context, child) {
                       return Theme(
-                        // Estiliza o DatePicker
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
-                            primary: Colors.grey, // Cor principal do DatePicker
-                            onPrimary:
-                                Colors
-                                    .white, // Cor do texto/ícones na cor primária
-                            onSurface:
-                                Colors
-                                    .black87, // Cor dos dias/texto no calendário
+                            primary: Colors.grey,
+                            onPrimary: Colors.white,
+                            onSurface: Colors.black87,
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
-                              foregroundColor:
-                                  Colors
-                                      .black87, // Cor dos botões "Cancelar" e "OK"
+                              foregroundColor: Colors.black87,
                             ),
                           ),
                         ),
@@ -334,27 +302,19 @@ class _FormCourseState extends State<FormCourse> {
                   }
                 },
               ),
-              const SizedBox(
-                height: 32,
-              ), // Espaçamento antes do botão de salvar
-              // Botão Salvar
+              const SizedBox(height: 32),
               SizedBox(
                 height: 50,
-                width: double.infinity, // Ocupa a largura total disponível
+                width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _saveCourse, // Chama a função unificada de salvar/atualizar
+                  onPressed: _saveCourse,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.grey[900], // Fundo do botão cinza escuro
-                    foregroundColor: Colors.white, // Texto do botão branco
-                    elevation: 0, // Sem sombra
+                    backgroundColor: Colors.grey[900],
+                    foregroundColor: Colors.white,
+                    elevation: 0,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero, // Bordas retas
-                      side: BorderSide(
-                        color: Colors.black12,
-                        width: 1,
-                      ), // Borda sutil
+                      borderRadius: BorderRadius.zero,
+                      side: BorderSide(color: Colors.black12, width: 1),
                     ),
                     textStyle: const TextStyle(
                       fontSize: 18,
@@ -363,7 +323,7 @@ class _FormCourseState extends State<FormCourse> {
                   ),
                   child: Text(
                     widget.courseEdit != null ? "Atualizar" : "Salvar",
-                  ), // Texto dinâmico
+                  ),
                 ),
               ),
             ],

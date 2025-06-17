@@ -31,8 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // Fundo cinza claro
-      // --- REMOVIDA A APPBAR COMPLETA ---
+      backgroundColor: Colors.grey[100],
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
