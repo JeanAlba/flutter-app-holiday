@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutterapp/form_course.dart';
+import 'package:flutterapp/holidays.dart';
 import 'package:flutterapp/models/course_model.dart';
 import 'package:flutterapp/repository/course_repository.dart';
 
@@ -49,8 +50,10 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: const Text('Feriados'),
               onTap: () {
-                // Update the state of the app.
-                // ...
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FeriadosScreen()),
+                );
               },
             ),
           ],
